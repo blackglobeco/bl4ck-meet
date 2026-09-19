@@ -1,4 +1,4 @@
-import firepadRef from "./firebase";
+import firepadRef, { db } from "./firebase";
 import { store } from "../index";
 
 const participantRef = firepadRef.child("participants");
@@ -93,4 +93,18 @@ const createAnswer = async (otherUserId, userId) => {
   };
 
   await participantRef1.child("answers").push().set({ answer });
+};
+
+// Removes the user from the room, then disconnects from Firebase so this
+// browser tab stops receiving (and reacting to) room events.
+export const leaveMeeting = async (userId) => {
+  try {
+    await Promise.race([
+      participantRef.child(userId).remove(),
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+    ]);
+  } catch (error) {
+    // onDisconnect() in App.js removes the participant anyway
+  }
+  db.database().goOffline();
 };

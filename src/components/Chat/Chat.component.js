@@ -57,7 +57,7 @@ const Chat = ({ messages, currentUserId, onSend, onClose }) => {
 
       <div className="chat-messages" ref={listRef}>
         {messages.length === 0 && (
-          <p className="chat-empty">No messages yet. Say hello to everyone.</p>
+          <p className="chat-empty">No messages yet.</p>
         )}
         {messages.map((message) => {
           const isMine = message.userId === currentUserId;

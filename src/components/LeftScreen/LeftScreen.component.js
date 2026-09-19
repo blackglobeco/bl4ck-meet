@@ -12,7 +12,7 @@ const startNewMeeting = () => {
 
 const LeftScreen = () => (
   <div className="left-screen">
-    <h1 className="left-title">You left the meeting</h1>
+    <h1 className="left-title">You left the room</h1>
     <p className="left-text">Your camera and microphone are off.</p>
     <div className="left-actions">
       <button type="button" className="left-button outline" onClick={rejoin}>

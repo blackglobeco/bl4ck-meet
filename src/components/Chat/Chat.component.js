@@ -39,7 +39,7 @@ const Chat = ({ messages, currentUserId, onSend, onClose }) => {
   return (
     <aside className="chat-panel" aria-label="In-call messages">
       <div className="chat-header">
-        <h2 className="chat-title">In-call messages</h2>
+        <h2 className="chat-title">In-room messages</h2>
         <button
           type="button"
           className="chat-close"
@@ -51,8 +51,8 @@ const Chat = ({ messages, currentUserId, onSend, onClose }) => {
       </div>
 
       <div className="chat-notice">
-        Everyone in the call can see these messages. You only see messages sent
-        while you are in the call.
+        Everyone in the room can see these messages. You only see messages sent
+        while you are in the room.
       </div>
 
       <div className="chat-messages" ref={listRef}>

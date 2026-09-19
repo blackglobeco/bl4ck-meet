@@ -1,8 +1,8 @@
 import firebase from "firebase";
 
 var firebaseConfig = {
-  apiKey: "", // Add API Key
-  databaseURL:"" // Add databaseURL
+  apiKey: "AIzaSyCGi_rcfN7S3oLlRuz84c5pT8i6ij-y91U",
+  databaseURL: "https://blackmeet-default-rtdb.firebaseio.com"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

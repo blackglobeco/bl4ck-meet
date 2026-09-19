@@ -1,12 +1,32 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import MeetingFooter from "../MeetingFooter/MeetingFooter.component";
 import Participants from "../Participants/Participants.component";
+import Chat from "../Chat/Chat.component";
+import LeftScreen from "../LeftScreen/LeftScreen.component";
 import "./MainScreen.css";
 import { connect } from "react-redux";
 import { setMainStream, updateUser } from "../../store/actioncreator";
+import { leaveMeeting } from "../../server/peerConnection";
+import { sendMessage, subscribeToMessages } from "../../server/chat";
 
 const MainScreen = (props) => {
   const participantRef = useRef(props.participants);
+  // Every stream that was ever shown (camera, then screen share...) so that
+  // leaving the call can switch the camera and microphone off completely
+  const streamsRef = useRef(new Set());
+  const [hasLeft, setHasLeft] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const chatOpenRef = useRef(false);
+  const currentUserIdRef = useRef(null);
+
+  const currentUserId = props.currentUser
+    ? Object.keys(props.currentUser)[0]
+    : null;
+  const currentUserName = props.currentUser
+    ? Object.values(props.currentUser)[0].name
+    : "";
 
   const onMicClick = (micEnabled) => {
     if (props.stream) {
@@ -72,10 +92,74 @@ const MainScreen = (props) => {
 
     props.updateUser({ screen: true });
   };
+
+  useEffect(() => {
+    if (props.stream) streamsRef.current.add(props.stream);
+  }, [props.stream]);
+
+  useEffect(() => {
+    currentUserIdRef.current = currentUserId;
+  }, [currentUserId]);
+
+  useEffect(() => {
+    if (hasLeft) return undefined;
+    const unsubscribe = subscribeToMessages((message) => {
+      setMessages((previous) =>
+        previous.some((item) => item.id === message.id)
+          ? previous
+          : [...previous, message]
+      );
+      if (message.userId !== currentUserIdRef.current && !chatOpenRef.current) {
+        setUnreadCount((count) => count + 1);
+      }
+    });
+    return unsubscribe;
+  }, [hasLeft]);
+
+  const onChatClick = () => {
+    const next = !chatOpen;
+    chatOpenRef.current = next;
+    setChatOpen(next);
+    if (next) setUnreadCount(0);
+  };
+
+  const onSendMessage = (text) => {
+    if (!currentUserId) return;
+    sendMessage({
+      userId: currentUserId,
+      name: currentUserName || "Guest",
+      text,
+    });
+  };
+
+  const onLeaveClick = () => {
+    Object.values(props.participants || {}).forEach((participant) => {
+      if (participant.peerConnection) participant.peerConnection.close();
+    });
+    if (props.stream) streamsRef.current.add(props.stream);
+    streamsRef.current.forEach((stream) =>
+      stream.getTracks().forEach((track) => track.stop())
+    );
+    setHasLeft(true);
+    if (currentUserId) leaveMeeting(currentUserId);
+  };
+
+  if (hasLeft) return <LeftScreen />;
+
   return (
     <div className="wrapper">
-      <div className="main-screen">
-        <Participants />
+      <div className="content-row">
+        <div className="main-screen">
+          <Participants />
+        </div>
+        {chatOpen && (
+          <Chat
+            messages={messages}
+            currentUserId={currentUserId}
+            onSend={onSendMessage}
+            onClose={onChatClick}
+          />
+        )}
       </div>
 
       <div className="footer">
@@ -83,6 +167,10 @@ const MainScreen = (props) => {
           onScreenClick={onScreenClick}
           onMicClick={onMicClick}
           onVideoClick={onVideoClick}
+          onLeaveClick={onLeaveClick}
+          onChatClick={onChatClick}
+          chatOpen={chatOpen}
+          unreadCount={unreadCount}
         />
       </div>
     </div>

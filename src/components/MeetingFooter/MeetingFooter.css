@@ -1,6 +1,7 @@
 .meeting-footer{
     background: #202124; 
     height: 100%;    
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,6 +19,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
 }
 
 .active {
@@ -28,4 +30,46 @@ div[disabled]
 {
   pointer-events: none;
   opacity: 0.3;
+}
+
+/* Leave call: red pill to the right of Share Screen */
+.meeting-icons.leave-button {
+  width: 64px;
+  border-radius: 20px;
+  background: #ea4335;
+}
+
+.meeting-icons.leave-button:hover {
+  background: #d93025;
+}
+
+/* Chat: pinned to the right end of the footer */
+.meeting-icons.chat-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+.meeting-icons.chat-toggle.chat-open {
+  background: #8ab4f8;
+  color: #202124;
+}
+
+.chat-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 9px;
+  background: #ea4335;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: center;
 }

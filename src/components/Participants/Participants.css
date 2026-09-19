@@ -2,7 +2,9 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-size), 1fr);
   grid-gap: 20px;
-  height: 85vh;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 10px;
   }
 

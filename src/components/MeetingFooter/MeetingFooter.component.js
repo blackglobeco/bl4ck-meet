@@ -6,6 +6,8 @@ import {
   faDesktop,
   faVideoSlash,
   faMicrophoneSlash,
+  faPhoneSlash,
+  faCommentDots,
 } from "@fortawesome/free-solid-svg-icons";
 import ReactTooltip from "react-tooltip";
 import "./MeetingFooter.css";
@@ -77,6 +79,25 @@ const MeetingFooter = (props) => {
         disabled={streamState.screen}
       >
         <FontAwesomeIcon icon={faDesktop} />
+      </div>
+      <div
+        className="meeting-icons leave-button"
+        data-tip="Leave call"
+        onClick={props.onLeaveClick}
+      >
+        <FontAwesomeIcon icon={faPhoneSlash} />
+      </div>
+      <div
+        className={"meeting-icons chat-toggle " + (props.chatOpen ? "chat-open" : "")}
+        data-tip={props.chatOpen ? "Close chat" : "Chat with everyone"}
+        onClick={props.onChatClick}
+      >
+        <FontAwesomeIcon icon={faCommentDots} />
+        {props.unreadCount > 0 && !props.chatOpen && (
+          <span className="chat-badge">
+            {props.unreadCount > 9 ? "9+" : props.unreadCount}
+          </span>
+        )}
       </div>
       <ReactTooltip />
     </div>
